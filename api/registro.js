@@ -1,22 +1,3 @@
-//
-//  Untitled.js
-//  as
-//
-//  Created by Andres Barrera on 15/05/26.
-//
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const path = require("path");
-
-dotenv.config();
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-app.use(express.static("public"));
-
 const { Pool } = require("pg");
 
 const pool = new Pool({
@@ -26,9 +7,19 @@ const pool = new Pool({
     }
 });
 
+module.exports = async (req, res) => {
 
+    // CORS
 
-app.post("/registro", async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    if (req.method !== "POST") {
+        return res.status(405).json({
+            error: "Método no permitido"
+        });
+    }
 
     try {
 
@@ -40,6 +31,8 @@ app.post("/registro", async (req, res) => {
             consentimiento
         } = req.body;
 
+        // VALIDACIONES
+
         if (!nombre || nombre.length < 3) {
             return res.status(400).json({
                 error: "Nombre inválido"
@@ -48,17 +41,17 @@ app.post("/registro", async (req, res) => {
 
         if (!evento) {
             return res.status(400).json({
-                error: "Selecciona un evento"
+                error: "Selecciona evento"
             });
         }
 
-        if (!numero_corredor.match(/^[0-9]{1,6}$/)) {
+        if (!/^[0-9]{1,6}$/.test(numero_corredor)) {
             return res.status(400).json({
                 error: "Número de corredor inválido"
             });
         }
 
-        if (!whatsapp.match(/^[0-9]{10,15}$/)) {
+        if (!/^[0-9]{10,15}$/.test(whatsapp)) {
             return res.status(400).json({
                 error: "WhatsApp inválido"
             });
@@ -91,7 +84,7 @@ app.post("/registro", async (req, res) => {
             ]
         );
 
-        res.json({
+        return res.status(200).json({
             mensaje: "Registro exitoso"
         });
 
@@ -99,12 +92,8 @@ app.post("/registro", async (req, res) => {
 
         console.log(error);
 
-        res.status(500).json({
+        return res.status(500).json({
             error: "Error servidor"
         });
     }
-});
-
-app.listen(process.env.PORT, () => {
-    console.log(`Servidor ejecutándose en puerto ${process.env.PORT}`);
-});
+};

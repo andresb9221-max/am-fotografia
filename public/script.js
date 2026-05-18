@@ -48,7 +48,7 @@ form.addEventListener("submit", async (e) => {
 
     try {
 
-        const response = await fetch("/registro", {
+        const response = await fetch("/api/registro", {
 
             method: "POST",
 
