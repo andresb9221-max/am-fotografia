@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A&M Fotografía</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="contenedor">
+
+    <h1>A&M<br>FOTOGRAFÍA</h1>
+
+    <p class="subtitulo">
+        Regístrate aquí para obtener notificaciones con tus fotos de la carrera:
+    </p>
+
+    <form id="registroForm">
+
+        <div class="campo">
+            <label>Nombre:</label>
+            <input
+                type="text"
+                id="nombre"
+                maxlength="100"
+                required
+            >
+        </div>
+
+        <div class="campo">
+            <label>Evento:</label>
+
+            <select id="evento" required>
+                <option value="">Selecciona un evento</option>
+
+                <option>5K Nocturna</option>
+                <option>Medio Maratón</option>
+                <option>Carrera Empresarial</option>
+            </select>
+        </div>
+
+        <div class="campo">
+            <label>Número de corredor:</label>
+
+            <input
+                type="text"
+                id="numero_corredor"
+                maxlength="6"
+                required
+            >
+        </div>
+
+        <div class="campo">
+            <label>Número de WhatsApp:</label>
+
+            <input
+                type="text"
+                id="whatsapp"
+                maxlength="15"
+                required
+            >
+        </div>
+
+        <div class="checkbox-container">
+
+            <input
+                type="checkbox"
+                id="consentimiento"
+            >
+
+            <div>
+                <label>
+                    Acepto recibir mensajes por WhatsApp relacionados con mis fotos del evento y enlaces de búsqueda
+                </label>
+
+                <p class="privacidad">
+                    No compartiremos tus datos con terceros
+                </p>
+            </div>
+        </div>
+
+        <button type="submit">
+            ENVIAR
+        </button>
+
+    </form>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
