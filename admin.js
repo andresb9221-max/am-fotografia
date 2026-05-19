@@ -1,14 +1,28 @@
 const selectEvento = document.getElementById("evento");
-        const respuesta = await fetch("/api/eventos");
 
-        const eventos = await respuesta.json();
+const adminForm = document.getElementById("adminForm");
+
+const mensaje = document.getElementById("mensaje");
+
+async function cargarEventos() {
+
+    try {
+
+        const respuesta =
+            await fetch("/api/eventos");
+
+        const eventos =
+            await respuesta.json();
 
         eventos.forEach(evento => {
 
-            const option = document.createElement("option");
+            const option =
+                document.createElement("option");
 
             option.value = evento.evento;
-            option.textContent = evento.evento;
+
+            option.textContent =
+                evento.evento;
 
             selectEvento.appendChild(option);
         });
@@ -21,46 +35,59 @@ const selectEvento = document.getElementById("evento");
 
 cargarEventos();
 
-adminForm.addEventListener("submit", async (e) => {
+adminForm.addEventListener(
+    "submit",
+    async (e) => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    mensaje.textContent = "Enviando mensajes...";
+        mensaje.textContent =
+            "Enviando mensajes...";
 
-    const evento = document.getElementById("evento").value;
-    const link = document.getElementById("link").value;
+        const evento =
+            document.getElementById("evento").value;
 
-    try {
+        const link =
+            document.getElementById("link").value;
 
-        const respuesta = await fetch("/api/enviar-links", {
+        try {
 
-            method: "POST",
+            const respuesta =
+                await fetch("/api/enviar-links", {
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+                    method: "POST",
 
-            body: JSON.stringify({
-                evento,
-                linkBase: link
-            })
-        });
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-        const data = await respuesta.json();
+                    body: JSON.stringify({
+                        evento,
+                        linkBase: link
+                    })
+                });
 
-        if (respuesta.ok) {
+            const data =
+                await respuesta.json();
 
-            mensaje.textContent = `Mensajes enviados: ${data.enviados}`;
+            if (respuesta.ok) {
 
-        } else {
+                mensaje.textContent =
+                    `Mensajes enviados: ${data.enviados}`;
 
-            mensaje.textContent = data.error;
+            } else {
+
+                mensaje.textContent =
+                    data.error;
+            }
+
+        } catch (error) {
+
+            console.log(error);
+
+            mensaje.textContent =
+                "Error del servidor";
         }
-
-    } catch (error) {
-
-        console.log(error);
-
-        mensaje.textContent = "Error del servidor";
     }
-});
+);
