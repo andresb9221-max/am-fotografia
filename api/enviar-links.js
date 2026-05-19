@@ -40,7 +40,6 @@ module.exports = async (req, res) => {
             SELECT *
             FROM registros
             WHERE evento = $1
-            AND consentimiento = true
         `, [evento]);
 
         let enviados = 0;
