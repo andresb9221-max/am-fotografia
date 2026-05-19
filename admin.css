@@ -1,4 +1,28 @@
 body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    width: 90%;
+    max-width: 700px;
+    margin: auto;
+    padding-top: 60px;
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-size: 36px;
+    margin-top: 0;
+    margin-bottom: 80px;
+}
 
 .campo {
     display: flex;
