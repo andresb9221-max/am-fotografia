@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>A&M Fotografía Admin</title>
+
+    <link rel="stylesheet" href="admin.css">
+
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>A&M FOTOGRAFIA</h1>
+        <h2>Admin</h2>
+
+        <form id="adminForm">
+
+            <div class="campo">
+
+                <label>Selecciona evento:</label>
+
+                <select id="evento" required>
+                    <option value="">Selecciona un evento</option>
+                </select>
+
+            </div>
+
+            <div class="campo">
+
+                <label>Link:</label>
+
+                <input
+                    type="text"
+                    id="link"
+                    placeholder="https://www.lumepic.com/...="
+                    required
+                >
+
+            </div>
+
+            <button type="submit">
+                ENVIAR LINKS
+            </button>
+
+        </form>
+
+        <p id="mensaje"></p>
+
+    </div>
+
+    <script src="admin.js"></script>
+
+</body>
+</html>
