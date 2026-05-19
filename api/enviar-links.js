@@ -1,3 +1,4 @@
+
 const { Pool } = require("pg");
 const twilio = require("twilio");
 
@@ -15,7 +16,11 @@ const pool = new Pool({
 
 module.exports = async (req, res) => {
 
+    console.log("===== INICIO ENVIO LINKS =====");
+
     if (req.method !== "POST") {
+
+        console.log("Método no permitido");
 
         return res.status(405).json({
             error: "Método no permitido"
@@ -29,7 +34,12 @@ module.exports = async (req, res) => {
             linkBase
         } = req.body;
 
+        console.log("Evento recibido:", evento);
+        console.log("Link base recibido:", linkBase);
+
         if (!evento || !linkBase) {
+
+            console.log("Faltan datos");
 
             return res.status(400).json({
                 error: "Faltan datos"
@@ -42,6 +52,13 @@ module.exports = async (req, res) => {
             WHERE evento = $1
         `, [evento]);
 
+        console.log(
+            "Participantes encontrados:",
+            participantes.rows.length
+        );
+
+        console.log(participantes.rows);
+
         let enviados = 0;
 
         for (const participante of participantes.rows) {
@@ -49,17 +66,46 @@ module.exports = async (req, res) => {
             const linkFinal =
                 `${linkBase}${participante.numero_corredor}`;
 
+            console.log(
+                "--------------------------------"
+            );
+
+            console.log(
+                "Procesando participante:"
+            );
+
+            console.log(
+                "Nombre:",
+                participante.nombre
+            );
+
+            console.log(
+                "WhatsApp:",
+                participante.whatsapp
+            );
+
+            console.log(
+                "Número corredor:",
+                participante.numero_corredor
+            );
+
+            console.log(
+                "Link final:",
+                linkFinal
+            );
+
             try {
 
-                await client.messages.create({
+                const respuestaTwilio =
+                    await client.messages.create({
 
-                    from:
-                        process.env.TWILIO_WHATSAPP_NUMBER,
+                        from:
+                            process.env.TWILIO_WHATSAPP_NUMBER,
 
-                    to:
-                        `whatsapp:+52${participante.whatsapp}`,
+                        to:
+                            `whatsapp:+52${participante.whatsapp}`,
 
-                    body:
+                        body:
 `Hola ${participante.nombre} 👋
 
 Tus fotos del evento ${participante.evento} ya están listas 📸
@@ -69,7 +115,16 @@ ${linkFinal}
 
 ¡Gracias por correr con nosotros!`
 
-                });
+                    });
+
+                console.log(
+                    "Mensaje enviado correctamente"
+                );
+
+                console.log(
+                    "SID:",
+                    respuestaTwilio.sid
+                );
 
                 enviados++;
 
@@ -80,13 +135,35 @@ ${linkFinal}
             } catch (twilioError) {
 
                 console.log(
-                    "Error enviando a:",
-                    participante.whatsapp
+                    "ERROR TWILIO"
+                );
+
+                console.log(
+                    "Mensaje:",
+                    twilioError.message
+                );
+
+                console.log(
+                    "Código:",
+                    twilioError.code
+                );
+
+                console.log(
+                    "Más detalles:"
                 );
 
                 console.log(twilioError);
             }
         }
+
+        console.log(
+            "Total enviados:",
+            enviados
+        );
+
+        console.log(
+            "===== FIN ENVIO LINKS ====="
+        );
 
         return res.status(200).json({
             mensaje: "Mensajes enviados",
@@ -94,6 +171,10 @@ ${linkFinal}
         });
 
     } catch (error) {
+
+        console.log(
+            "ERROR GENERAL"
+        );
 
         console.log(error);
 
