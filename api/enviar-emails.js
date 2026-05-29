@@ -48,50 +48,55 @@ try {
 
         try {
 
-            await resend.emails.send({
+            const resultado =
+                await resend.emails.send({
 
-                from:
-                    "A&M Fotografía <onboarding@resend.dev>",
+                    from:
+                        "A&M Fotografía <onboarding@resend.dev>",
 
-                to:
-                    participante.email,
+                    to:
+                        participante.email,
 
-                subject:
-                    `Tus fotos ya están listas 📸`,
+                    subject:
+                        `Tus fotos ya están listas 📸`,
 
-            html:
-            `
+                    html:
+                    `
+                    <h2>
+                    Hola ${participante.nombre} 👋
+                    </h2>
 
-            <h2>
-            Hola ${participante.nombre} 👋
-            </h2>
+                    <p>
+                    Tus fotos del evento
+                    <b>${participante.evento}</b>
+                    ya están disponibles.
+                    </p>
 
-            <p>
-            Tus fotos del evento
-            <b>${participante.evento}</b>
-            ya están disponibles.
-            </p>
+                    <p>
+                    <a href="${linkFinal}">
+                    VER MIS FOTOS
+                    </a>
+                    </p>
 
-            <p>
-            <a href="${linkFinal}">
-            VER MIS FOTOS
-            </a>
-            </p>
-
-            <p>
-            ¡Gracias por correr con nosotros!
-            </p>
-            `
-
-
-
-
+                    <p>
+                    ¡Gracias por correr con nosotros!
+                    </p>
+                    `
                 });
 
+            console.log(
+                "EMAIL ENVIADO:"
+            );
+
+            console.log(resultado);
 
             enviados++;
 
         } catch (emailError) {
+
+            console.log(
+                "ERROR EMAIL:"
+            );
 
             console.log(emailError);
         }
