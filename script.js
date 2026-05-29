@@ -9,7 +9,7 @@ const form = document.getElementById("registroForm");
 
 form.addEventListener("submit", async (e) => {
 
-```
+
 e.preventDefault();
 
 const nombre =
