@@ -36,7 +36,7 @@ const email =
 
 const consentimiento =
     document.getElementById("consentimiento")
-    .checked();
+    .checked;
 
 // VALIDACIONES
 
