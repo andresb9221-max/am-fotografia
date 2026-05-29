@@ -1,8 +1,6 @@
 //
 //  script.js
-//  as
-//
-//  Created by Andres Barrera on 15/05/26.
+//  A&M Fotografía
 //
 
 const form = document.getElementById("registroForm");
@@ -38,13 +36,20 @@ const email =
 
 const consentimiento =
     document.getElementById("consentimiento")
-    .checked;
+    .checked();
 
-// VALIDACIONES FRONTEND
+// VALIDACIONES
 
 if (nombre.length < 3) {
 
     alert("Nombre inválido");
+
+    return;
+}
+
+if (!evento) {
+
+    alert("Selecciona un evento");
 
     return;
 }
@@ -112,6 +117,8 @@ try {
     }
 
 } catch (error) {
+
+    console.log(error);
 
     alert("Error conectando con el servidor");
 }
