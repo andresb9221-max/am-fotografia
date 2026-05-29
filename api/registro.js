@@ -28,6 +28,7 @@ module.exports = async (req, res) => {
             evento,
             numero_corredor,
             whatsapp,
+            email,
             consentimiento
         } = req.body;
 
@@ -71,15 +72,17 @@ module.exports = async (req, res) => {
                 evento,
                 numero_corredor,
                 whatsapp,
+                email,
                 consentimiento
             )
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3, $4, $5, $6)
             `,
             [
                 nombre,
                 evento,
                 numero_corredor,
                 whatsapp,
+                email,
                 consentimiento
             ]
         );
