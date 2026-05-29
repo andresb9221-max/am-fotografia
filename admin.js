@@ -6,88 +6,94 @@ const mensaje = document.getElementById("mensaje");
 
 async function cargarEventos() {
 
-    try {
 
-        const respuesta =
-            await fetch("/api/eventos");
+try {
 
-        const eventos =
-            await respuesta.json();
+    const respuesta =
+        await fetch("/api/eventos");
 
-        eventos.forEach(evento => {
+    const eventos =
+        await respuesta.json();
 
-            const option =
-                document.createElement("option");
+    eventos.forEach(evento => {
 
-            option.value = evento.evento;
+        const option =
+            document.createElement("option");
 
-            option.textContent =
-                evento.evento;
+        option.value = evento.evento;
 
-            selectEvento.appendChild(option);
-        });
+        option.textContent =
+            evento.evento;
 
-    } catch (error) {
+        selectEvento.appendChild(option);
+    });
 
-        console.log(error);
-    }
+} catch (error) {
+
+    console.log(error);
+}
+
+
 }
 
 cargarEventos();
 
 adminForm.addEventListener(
-    "submit",
-    async (e) => {
+"submit",
+async (e) => {
 
-        e.preventDefault();
 
-        mensaje.textContent =
-            "Enviando mensajes...";
+    e.preventDefault();
 
-        const evento =
-            document.getElementById("evento").value;
+    mensaje.textContent =
+        "Enviando emails...";
 
-        const link =
-            document.getElementById("link").value;
+    const evento =
+        document.getElementById("evento").value;
 
-        try {
+    const link =
+        document.getElementById("link").value;
 
-            const respuesta =
-                await fetch("/api/enviar-links", {
+    try {
 
-                    method: "POST",
+        const respuesta =
+            await fetch("/api/enviar-emails", {
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                method: "POST",
 
-                    body: JSON.stringify({
-                        evento,
-                        linkBase: link
-                    })
-                });
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-            const data =
-                await respuesta.json();
+                body: JSON.stringify({
+                    evento,
+                    linkBase: link
+                })
+            });
 
-            if (respuesta.ok) {
+        const data =
+            await respuesta.json();
 
-                mensaje.textContent =
-                    `Mensajes enviados: ${data.enviados}`;
-
-            } else {
-
-                mensaje.textContent =
-                    data.error;
-            }
-
-        } catch (error) {
-
-            console.log(error);
+        if (respuesta.ok) {
 
             mensaje.textContent =
-                "Error del servidor";
+                `Emails enviados: ${data.enviados}`;
+
+        } else {
+
+            mensaje.textContent =
+                data.error;
         }
+
+    } catch (error) {
+
+        console.log(error);
+
+        mensaje.textContent =
+            "Error del servidor";
     }
+}
+
+
 );

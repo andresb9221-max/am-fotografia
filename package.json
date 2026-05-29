@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "pg": "^8.16.0",
+    "resend": "^6.12.4",
     "twilio": "^6.0.2"
   }
 }
