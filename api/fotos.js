@@ -22,17 +22,31 @@ if (req.method !== "GET") {
 
 try {
 
-    const resultado = await pool.query(
-        `
-        SELECT
-            id,
-            nombre_archivo,
-            url_thumbnail
-        FROM fotos
-        ORDER BY id
-        LIMIT 20
-        `
-    );
+    const pagina =
+        parseInt(req.query.page || "1");
+
+    const limite = 20;
+
+    const offset =
+        (pagina - 1) * limite;
+
+    const resultado =
+        await pool.query(
+            `
+            SELECT
+                id,
+                nombre_archivo,
+                url_thumbnail
+            FROM fotos
+            ORDER BY id
+            LIMIT $1
+            OFFSET $2
+            `,
+            [
+                limite,
+                offset
+            ]
+        );
 
     return res.status(200).json(
         resultado.rows
