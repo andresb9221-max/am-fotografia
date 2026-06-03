@@ -117,6 +117,59 @@
 ```
 
 </head>
+
+<script>
+
+async function cargarFotos() {
+
+    try {
+
+        const respuesta = await fetch(
+            "/api/fotos"
+        );
+
+        const fotos = await respuesta.json();
+
+        const galeria =
+            document.querySelector(
+                ".galeria"
+            );
+
+        galeria.innerHTML = "";
+
+        fotos.forEach(foto => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.className = "foto";
+
+            div.innerHTML = `
+                <img
+                    src="${foto.url_thumbnail}"
+                    alt="${foto.nombre_archivo}"
+                    loading="lazy"
+                >
+            `;
+
+            galeria.appendChild(
+                div
+            );
+        });
+
+    } catch (error) {
+
+        console.error(error);
+    }
+}
+
+cargarFotos();
+
+</script>
+
+
 <body>
 
 ```
