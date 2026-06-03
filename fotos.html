@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A&M Fotografía</title>
+
+```
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #000;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 95%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 2rem;
+        letter-spacing: 2px;
+    }
+
+    .busqueda {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .busqueda input {
+        flex: 1;
+        padding: 14px;
+        border: 1px solid white;
+        border-radius: 6px;
+        background: black;
+        color: white;
+        font-size: 1rem;
+    }
+
+    .busqueda button {
+        padding: 14px 20px;
+        border: none;
+        border-radius: 6px;
+        background: white;
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .galeria {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .foto {
+        background: #111;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .foto img {
+        width: 100%;
+        display: block;
+    }
+
+    .paginacion {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .paginacion button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background: white;
+        color: black;
+    }
+
+    @media (min-width: 768px) {
+
+        .galeria {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+    }
+
+    @media (min-width: 1200px) {
+
+        .galeria {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+    }
+
+</style>
+```
+
+</head>
+<body>
+
+```
+<div class="container">
+
+    <h1>A&M FOTOGRAFÍA</h1>
+
+    <div class="busqueda">
+
+        <input
+            type="text"
+            placeholder="Búsqueda por número"
+        >
+
+        <button>
+            Buscar
+        </button>
+
+    </div>
+
+    <div class="galeria">
+
+        <!-- Aquí se insertarán las fotos dinámicamente -->
+
+    </div>
+
+    <div class="paginacion">
+
+        <button>Anterior</button>
+
+        <span>Página 1</span>
+
+        <button>Siguiente</button>
+
+    </div>
+
+</div>
+```
+
+</body>
+</html>
+

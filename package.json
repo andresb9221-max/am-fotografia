@@ -2,7 +2,9 @@
   "name": "am-fotografia",
   "version": "1.0.0",
   "dependencies": {
-    "pg": "^8.16.0",
+    "aws-sdk": "^2.1693.0",
+    "dotenv": "^17.4.2",
+    "pg": "^8.21.0",
     "resend": "^6.12.4",
     "twilio": "^6.0.2"
   }
