@@ -160,6 +160,57 @@
 
 </head>
 
+
+<body>
+    
+
+    
+<div class="container">
+
+    <h1>A&M FOTOGRAFÍA</h1>
+
+    <div class="busqueda">
+
+        <input
+            type="text"
+            placeholder="Búsqueda por número"
+        >
+
+        <button>
+            Buscar
+        </button>
+
+    </div>
+
+    <div class="galeria">
+
+        <!-- Aquí se insertarán las fotos dinámicamente -->
+
+    </div>
+
+</div>
+
+<div id="modal" class="modal">
+        <span class="cerrar">&times;</span>
+        <img id="imagen-ampliada">
+</div>
+
+<div class="paginacion">
+
+    <button id="anterior">
+        ←
+    </button>
+
+    <span id="pagina-actual">
+        Página 1
+    </span>
+
+    <button id="siguiente">
+        →
+    </button>
+
+</div>
+
 <script>
 
     let pagina = 1;
@@ -310,65 +361,9 @@ modal.addEventListener(
 
 </script>
 
-<div id="modal" class="modal">
-    <span class="cerrar">&times;</span>
-    <img id="imagen-ampliada">
-</div>
 
 
-<body>
 
-```
-<div class="container">
-
-    <h1>A&M FOTOGRAFÍA</h1>
-
-    <div class="busqueda">
-
-        <input
-            type="text"
-            placeholder="Búsqueda por número"
-        >
-
-        <button>
-            Buscar
-        </button>
-
-    </div>
-
-    <div class="galeria">
-
-        <!-- Aquí se insertarán las fotos dinámicamente -->
-
-    </div>
-
-    <div class="paginacion">
-
-        <button>Anterior</button>
-
-        <span>Página 1</span>
-
-        <button>Siguiente</button>
-
-    </div>
-
-</div>
-
-<div class="paginacion">
-
-    <button id="anterior">
-        ←
-    </button>
-
-    <span id="pagina-actual">
-        Página 1
-    </span>
-
-    <button id="siguiente">
-        →
-    </button>
-
-</div>
 
 </body>
 </html>
