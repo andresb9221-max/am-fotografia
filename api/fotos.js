@@ -29,6 +29,13 @@ try {
 
     const offset =
         (pagina - 1) * limite;
+    
+    const total = await pool.query(
+        `
+        SELECT COUNT(*) as total
+        FROM fotos
+        `
+    );
 
     const resultado =
         await pool.query(
@@ -48,9 +55,12 @@ try {
             ]
         );
 
-    return res.status(200).json(
-        resultado.rows
-    );
+    res.status(200).json({
+        fotos: resultado.rows,
+        total: parseInt(
+            total.rows[0].total
+        )
+    });
 
 } catch (error) {
 

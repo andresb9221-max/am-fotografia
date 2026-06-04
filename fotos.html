@@ -224,7 +224,19 @@ async function cargarFotos() {
                 `/api/fotos?page=${pagina}`
             );
 
-        const fotos = await respuesta.json();
+        const datos =
+            await respuesta.json();
+
+        const fotos =
+            datos.fotos;
+
+        const total =
+            datos.total;
+
+        const totalPaginas =
+            Math.ceil(
+                total / 20
+            );
 
         const galeria =
             document.querySelector(
@@ -264,7 +276,19 @@ async function cargarFotos() {
     document.getElementById(
         "pagina-actual"
     ).textContent =
-        `Página ${pagina}`;
+        `Página ${pagina} de ${totalPaginas}`;
+        
+    
+    document.getElementById(
+        "anterior"
+    ).disabled =
+        pagina === 1;
+
+    document.getElementById(
+        "siguiente"
+    ).disabled =
+        pagina >= totalPaginas;
+    
 }
 
 cargarFotos();
