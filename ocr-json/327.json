@@ -1,0 +1,167 @@
+{
+  "responses": [
+    {
+      "textAnnotations": [
+        {
+          "locale": "und",
+          "description": "A",
+          "boundingPoly": {
+            "vertices": [
+              {
+                "x": 407,
+                "y": 13
+              },
+              {
+                "x": 567,
+                "y": 13
+              },
+              {
+                "x": 567,
+                "y": 129
+              },
+              {
+                "x": 407,
+                "y": 129
+              }
+            ]
+          }
+        },
+        {
+          "description": "A",
+          "boundingPoly": {
+            "vertices": [
+              {
+                "x": 567,
+                "y": 126
+              },
+              {
+                "x": 409,
+                "y": 129
+              },
+              {
+                "x": 407,
+                "y": 16
+              },
+              {
+                "x": 565,
+                "y": 13
+              }
+            ]
+          }
+        }
+      ],
+      "fullTextAnnotation": {
+        "pages": [
+          {
+            "width": 1667,
+            "height": 2500,
+            "blocks": [
+              {
+                "boundingBox": {
+                  "vertices": [
+                    {
+                      "x": 567,
+                      "y": 126
+                    },
+                    {
+                      "x": 409,
+                      "y": 129
+                    },
+                    {
+                      "x": 407,
+                      "y": 16
+                    },
+                    {
+                      "x": 565,
+                      "y": 13
+                    }
+                  ]
+                },
+                "paragraphs": [
+                  {
+                    "boundingBox": {
+                      "vertices": [
+                        {
+                          "x": 567,
+                          "y": 126
+                        },
+                        {
+                          "x": 409,
+                          "y": 129
+                        },
+                        {
+                          "x": 407,
+                          "y": 16
+                        },
+                        {
+                          "x": 565,
+                          "y": 13
+                        }
+                      ]
+                    },
+                    "words": [
+                      {
+                        "boundingBox": {
+                          "vertices": [
+                            {
+                              "x": 567,
+                              "y": 126
+                            },
+                            {
+                              "x": 409,
+                              "y": 129
+                            },
+                            {
+                              "x": 407,
+                              "y": 16
+                            },
+                            {
+                              "x": 565,
+                              "y": 13
+                            }
+                          ]
+                        },
+                        "symbols": [
+                          {
+                            "property": {
+                              "detectedBreak": {
+                                "type": "LINE_BREAK"
+                              }
+                            },
+                            "boundingBox": {
+                              "vertices": [
+                                {
+                                  "x": 567,
+                                  "y": 126
+                                },
+                                {
+                                  "x": 409,
+                                  "y": 129
+                                },
+                                {
+                                  "x": 407,
+                                  "y": 16
+                                },
+                                {
+                                  "x": 565,
+                                  "y": 13
+                                }
+                              ]
+                            },
+                            "text": "A"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "blockType": "TEXT"
+              }
+            ]
+          }
+        ],
+        "text": "A"
+      }
+    }
+  ]
+}

@@ -172,11 +172,12 @@
     <div class="busqueda">
 
         <input
+            id="busqueda-numero"
             type="text"
             placeholder="Búsqueda por número"
         >
 
-        <button>
+        <button id="btn-buscar">
             Buscar
         </button>
 
@@ -214,7 +215,14 @@
 <script>
 
     let pagina = 1;
+
+    let paginaAnterior = 1;
+
+    let modoBusqueda = false;
+
+    let posicionScroll = 0;
     
+        
 async function cargarFotos() {
 
     try {
@@ -292,6 +300,76 @@ async function cargarFotos() {
 }
 
 cargarFotos();
+
+async function buscarFotos() {
+
+    const numero =
+        document.getElementById(
+            "busqueda-numero"
+        ).value.trim();
+
+    if (!numero) {
+        return;
+    }
+
+    posicionScroll =
+        window.scrollY;
+
+    paginaAnterior =
+        pagina;
+
+    modoBusqueda = true;
+
+    const respuesta =
+        await fetch(
+            `/api/buscar?numero=${numero}`
+        );
+
+    const fotos =
+        await respuesta.json();
+
+    const galeria =
+        document.querySelector(
+            ".galeria"
+        );
+
+    galeria.innerHTML = "";
+
+    fotos.forEach(foto => {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.className = "foto";
+
+        div.innerHTML = `
+            <img
+                src="${foto.url_thumbnail}"
+                alt="${foto.nombre_archivo}"
+                loading="lazy"
+                class="thumbnail"
+            >
+        `;
+
+        galeria.appendChild(div);
+
+    });
+
+    document.getElementById(
+        "pagina-actual"
+    ).textContent =
+        `${fotos.length} coincidencias`;
+
+    document.getElementById(
+        "anterior"
+    ).disabled = true;
+
+    document.getElementById(
+        "siguiente"
+    ).disabled = true;
+}
 
 document.getElementById(
     "siguiente"
@@ -378,6 +456,55 @@ modal.addEventListener(
 
             modal.style.display =
                 "none";
+        }
+
+    }
+);
+
+document.getElementById(
+    "btn-buscar"
+).addEventListener(
+    "click",
+    buscarFotos
+);
+
+document.getElementById(
+    "busqueda-numero"
+).addEventListener(
+    "keypress",
+    (e) => {
+
+        if (e.key === "Enter") {
+
+            buscarFotos();
+        }
+
+    }
+);
+
+document.getElementById(
+    "busqueda-numero"
+).addEventListener(
+    "input",
+    async (e) => {
+
+        if (
+            e.target.value.trim() === ""
+            &&
+            modoBusqueda
+        ) {
+
+            modoBusqueda = false;
+
+            pagina =
+                paginaAnterior;
+
+            await cargarFotos();
+
+            window.scrollTo({
+                top: posicionScroll,
+                behavior: "instant"
+            });
         }
 
     }
