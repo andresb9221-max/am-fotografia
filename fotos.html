@@ -267,28 +267,28 @@ async function cargarFotos() {
                 div
             );
         });
+        
+        document.getElementById(
+            "pagina-actual"
+        ).textContent =
+            `Página ${pagina} de ${totalPaginas}`;
+            
+        
+        document.getElementById(
+            "anterior"
+        ).disabled =
+            pagina === 1;
+
+        document.getElementById(
+            "siguiente"
+        ).disabled =
+            pagina >= totalPaginas;
 
     } catch (error) {
 
         console.error(error);
     }
-    
-    document.getElementById(
-        "pagina-actual"
-    ).textContent =
-        `Página ${pagina} de ${totalPaginas}`;
-        
-    
-    document.getElementById(
-        "anterior"
-    ).disabled =
-        pagina === 1;
-
-    document.getElementById(
-        "siguiente"
-    ).disabled =
-        pagina >= totalPaginas;
-    
+      
 }
 
 cargarFotos();
