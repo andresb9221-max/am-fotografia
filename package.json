@@ -2,6 +2,7 @@
   "name": "am-fotografia",
   "version": "1.0.0",
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "aws-sdk": "^2.1693.0",
     "dotenv": "^17.4.2",
     "pg": "^8.21.0",
