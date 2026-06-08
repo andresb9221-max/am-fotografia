@@ -58,6 +58,26 @@ async function procesarFotos() {
                 `Procesando ${foto.nombre_archivo}`
             );
             
+            
+            const archivoJson =
+                    path.join(
+                        carpetaJson,
+                        `${foto.id}.json`
+                    );
+
+                if (
+                    fs.existsSync(
+                        archivoJson
+                    )
+                ) {
+
+                    console.log(
+                        `Ya existe ${foto.id}.json`
+                    );
+
+                    continue;
+                }
+            
             if (!foto.url_original) {
 
                 console.log(
@@ -116,12 +136,6 @@ async function procesarFotos() {
 
             const data =
                 await response.json();
-
-            const archivoJson =
-                path.join(
-                    carpetaJson,
-                    `${foto.id}.json`
-                );
 
             fs.writeFileSync(
                 archivoJson,
