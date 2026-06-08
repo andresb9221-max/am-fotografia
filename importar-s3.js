@@ -66,6 +66,14 @@ async function importarFotos() {
             );
             
             for (const archivo of resultado.Contents) {
+                
+                if (
+                    !archivo.Key.startsWith(
+                        "thumbnails/"
+                    )
+                ) {
+                    continue;
+                }
 
                 if (archivo.Key.endsWith("/")) {
                     continue;

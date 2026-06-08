@@ -43,7 +43,9 @@ try {
             SELECT
                 id,
                 nombre_archivo,
-                url_thumbnail
+                url_thumbnail,
+                url_preview,
+                url_original
             FROM fotos
             ORDER BY id
             LIMIT $1

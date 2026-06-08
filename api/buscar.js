@@ -45,6 +45,7 @@ module.exports = async (req, res) => {
                     id,
                     nombre_archivo,
                     url_thumbnail,
+                    url_preview,
                     url_original,
                     numeros_detectados
                 FROM fotos

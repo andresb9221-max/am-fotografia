@@ -155,8 +155,47 @@
         border-radius: 8px;
     }
     
+    .modal-contenido {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 95%;
+        max-height: 95%;
+    }
+
+    .btn-descargar {
+        margin-top: 15px;
+        background: white;
+        color: black;
+        padding: 12px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .modal-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: white;
+        color: black;
+        border: none;
+        font-size: 28px;
+        padding: 10px 15px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .modal-prev {
+        left: 15px;
+    }
+
+    .modal-next {
+        right: 15px;
+    }
+    
 </style>
-```
+
 
 </head>
 
@@ -192,8 +231,32 @@
 </div>
 
 <div id="modal" class="modal">
-        <span class="cerrar">&times;</span>
+
+    <span class="cerrar">&times;</span>
+
+    <button id="modal-anterior" class="modal-nav modal-prev">
+        ←
+    </button>
+
+    <div class="modal-contenido">
+
         <img id="imagen-ampliada">
+
+        <a
+            id="btn-descargar"
+            href="#"
+            target="_blank"
+            class="btn-descargar"
+        >
+            Descargar original HD
+        </a>
+
+    </div>
+
+    <button id="modal-siguiente" class="modal-nav modal-next">
+        →
+    </button>
+
 </div>
 
 <div class="paginacion">
@@ -222,6 +285,9 @@
 
     let posicionScroll = 0;
     
+    let fotosActuales = [];
+    let indiceActual = 0;
+    
         
 async function cargarFotos() {
 
@@ -238,6 +304,8 @@ async function cargarFotos() {
         const fotos =
             datos.fotos;
 
+        fotosActuales = fotos;
+        
         const total =
             datos.total;
 
@@ -253,7 +321,7 @@ async function cargarFotos() {
 
         galeria.innerHTML = "";
 
-        fotos.forEach(foto => {
+        fotos.forEach((foto, index) => {
 
             const div =
                 document.createElement(
@@ -268,6 +336,7 @@ async function cargarFotos() {
                     alt="${foto.nombre_archivo}"
                     loading="lazy"
                     class="thumbnail"
+                    data-index="${index}"
                 >
             `;
 
@@ -327,6 +396,9 @@ async function buscarFotos() {
 
     const fotos =
         await respuesta.json();
+        
+    fotosActuales = fotos;
+    
 
     const galeria =
         document.querySelector(
@@ -335,7 +407,7 @@ async function buscarFotos() {
 
     galeria.innerHTML = "";
 
-    fotos.forEach(foto => {
+    fotos.forEach((foto, index) => {
 
         const div =
             document.createElement(
@@ -345,13 +417,14 @@ async function buscarFotos() {
         div.className = "foto";
 
         div.innerHTML = `
-            <img
-                src="${foto.url_thumbnail}"
-                alt="${foto.nombre_archivo}"
-                loading="lazy"
-                class="thumbnail"
-            >
-        `;
+                <img
+                    src="${foto.url_thumbnail}"
+                    alt="${foto.nombre_archivo}"
+                    loading="lazy"
+                    class="thumbnail"
+                    data-index="${index}"
+                >
+            `;
 
         galeria.appendChild(div);
 
@@ -417,26 +490,86 @@ const imagenAmpliada =
         "imagen-ampliada"
     );
 
-document.addEventListener(
-    "click",
-    (e) => {
+    function abrirFoto(index) {
 
-        if (
-            e.target.classList.contains(
-                "thumbnail"
-            )
-        ) {
+        indiceActual = index;
 
-            imagenAmpliada.src =
-                e.target.src;
+        const foto =
+            fotosActuales[indiceActual];
 
-            modal.style.display =
-                "flex";
-        }
+        imagenAmpliada.src =
+            foto.url_preview || foto.url_thumbnail;
 
+        document.getElementById(
+            "btn-descargar"
+        ).href =
+            foto.url_original;
+
+        modal.style.display =
+            "flex";
     }
-);
 
+    document.addEventListener(
+        "click",
+        (e) => {
+
+            if (
+                e.target.classList.contains(
+                    "thumbnail"
+                )
+            ) {
+
+                const index =
+                    parseInt(
+                        e.target.dataset.index
+                    );
+
+                abrirFoto(index);
+            }
+
+        }
+    );
+
+    
+    document.getElementById(
+        "modal-siguiente"
+    ).addEventListener(
+        "click",
+        (e) => {
+
+            e.stopPropagation();
+
+            if (
+                indiceActual <
+                fotosActuales.length - 1
+            ) {
+
+                abrirFoto(
+                    indiceActual + 1
+                );
+            }
+        }
+    );
+
+    document.getElementById(
+        "modal-anterior"
+    ).addEventListener(
+        "click",
+        (e) => {
+
+            e.stopPropagation();
+
+            if (
+                indiceActual > 0
+            ) {
+
+                abrirFoto(
+                    indiceActual - 1
+                );
+            }
+        }
+    );
+    
 document.querySelector(
     ".cerrar"
 ).addEventListener(
@@ -505,6 +638,50 @@ document.getElementById(
                 top: posicionScroll,
                 behavior: "instant"
             });
+        }
+
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    (e) => {
+
+        if (
+            modal.style.display !== "flex"
+        ) {
+            return;
+        }
+
+        if (e.key === "ArrowRight") {
+
+            if (
+                indiceActual <
+                fotosActuales.length - 1
+            ) {
+
+                abrirFoto(
+                    indiceActual + 1
+                );
+            }
+        }
+
+        if (e.key === "ArrowLeft") {
+
+            if (
+                indiceActual > 0
+            ) {
+
+                abrirFoto(
+                    indiceActual - 1
+                );
+            }
+        }
+
+        if (e.key === "Escape") {
+
+            modal.style.display =
+                "none";
         }
 
     }
