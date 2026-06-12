@@ -508,8 +508,56 @@
         actualizarCarrito();
     }
  
+ function precargarVecinas() {
+
+     const siguiente =
+         fotosActuales[indiceActual + 1];
+
+     const anterior =
+         fotosActuales[indiceActual - 1];
+
+     if (siguiente?.url_preview) {
+         const imgSig = new Image();
+         imgSig.src = siguiente.url_preview;
+     }
+
+     if (anterior?.url_preview) {
+         const imgAnt = new Image();
+         imgAnt.src = anterior.url_preview;
+     }
+ }
  
  
+ function abrirFoto(index) {
+
+     indiceActual = index;
+
+     const foto =
+         fotosActuales[indiceActual];
+
+     document.getElementById(
+         "btn-agregar-carrito"
+     ).onclick = () => {
+         agregarAlCarrito(foto);
+     };
+
+     document.getElementById(
+         "panel-carrito"
+     ).classList.remove("abierto");
+
+     imagenAmpliada.src =
+         foto.url_preview || foto.url_thumbnail;
+
+     document.getElementById(
+         "btn-descargar"
+     ).href =
+         foto.url_original;
+
+     modal.style.display =
+         "flex";
+ }
+ 
+ precargarVecinas();
  
  async function cargarFotos() {
 
@@ -704,7 +752,7 @@ async function buscarFotos() {
 }
 
 
-
+    
 
 
 
