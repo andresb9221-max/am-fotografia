@@ -36,10 +36,15 @@
         letter-spacing: 2px;
     }
 
-    .busqueda {
+    ..busqueda {
         display: flex;
         gap: 10px;
         margin-bottom: 30px;
+        position: sticky;
+        top: 0;
+        background: black;
+        padding: 10px 0;
+        z-index: 9000;
     }
 
     .busqueda input {
@@ -271,6 +276,10 @@
         margin-top: 12px;
     }
     
+    .cargando-preview {
+        opacity: 0.4;
+    }
+    
 </style>
 
 
@@ -390,13 +399,13 @@
 
     let carrito =
         JSON.parse(
-            localStorage.getItem("carritoFotos")
+            sessionStorage.getItem("carritoFotos")
         ) || [];
     
     
     function guardarCarrito() {
 
-        localStorage.setItem(
+        sessionStorage.setItem(
             "carritoFotos",
             JSON.stringify(carrito)
         );
@@ -713,21 +722,47 @@ const imagenAmpliada =
 
         const foto =
             fotosActuales[indiceActual];
-            
+
         document.getElementById(
             "btn-agregar-carrito"
         ).onclick = () => {
-
             agregarAlCarrito(foto);
         };
-        
+
         document.getElementById(
             "panel-carrito"
-        ).classList.remove(
-            "abierto"
+        ).classList.remove("abierto");
+
+        const btnSig =
+            document.getElementById("modal-siguiente");
+
+        const btnAnt =
+            document.getElementById("modal-anterior");
+
+        btnSig.disabled = true;
+        btnAnt.disabled = true;
+
+        imagenAmpliada.classList.add(
+            "cargando-preview"
         );
 
-        imagenAmpliada.src =
+        const nuevaImagen =
+            new Image();
+
+        nuevaImagen.onload = () => {
+
+            imagenAmpliada.src =
+                nuevaImagen.src;
+
+            imagenAmpliada.classList.remove(
+                "cargando-preview"
+            );
+
+            btnSig.disabled = false;
+            btnAnt.disabled = false;
+        };
+
+        nuevaImagen.src =
             foto.url_preview || foto.url_thumbnail;
 
         document.getElementById(
