@@ -79,24 +79,6 @@
         display: block;
     }
 
-    .paginacion {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        margin-top: 30px;
-        flex-wrap: wrap;
-    }
-
-    .paginacion button {
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        background: white;
-        color: black;
-    }
-
     @media (min-width: 768px) {
 
         .galeria {
@@ -145,23 +127,6 @@
         color: white;
         font-size: 40px;
         cursor: pointer;
-    }
-
-    .paginacion {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
-        margin: 30px 0;
-    }
-
-    .paginacion button {
-        background: white;
-        color: black;
-        border: none;
-        padding: 10px 18px;
-        cursor: pointer;
-        border-radius: 8px;
     }
     
     .modal-contenido {
@@ -375,21 +340,10 @@
 
 </div>
 
-<div class="paginacion">
+<div id="sentinela"></div>
 
-    <button id="anterior">
-        ←
-    </button>
-
-    <span id="pagina-actual">
-        Página 1
-    </span>
-
-    <button id="siguiente">
-        →
-    </button>
-
-</div>
+<p id="estado-carga" style="text-align:center; color:#aaa; margin:30px 0;">
+</p>
 
 <button id="btn-ver-carrito" class="btn-carrito">
     🛒 Carrito <span id="contador-carrito">0</span>
@@ -419,6 +373,9 @@
 <script>
 
     let pagina = 1;
+    
+    let cargando = false;
+    let hayMasFotos = true;
 
     let paginaAnterior = 1;
 
@@ -545,86 +502,131 @@
  
  
  
-async function cargarFotos() {
+ async function cargarFotos() {
 
-    try {
+     if (cargando || !hayMasFotos || modoBusqueda) {
+         return;
+     }
 
-        const respuesta =
-            await fetch(
-                `/api/fotos?page=${pagina}`
-            );
+     cargando = true;
 
-        const datos =
-            await respuesta.json();
+     document.getElementById(
+         "estado-carga"
+     ).textContent =
+         "Cargando fotos...";
 
-        const fotos =
-            datos.fotos;
+     try {
 
-        fotosActuales = fotos;
-        
-        const total =
-            datos.total;
+         const respuesta =
+             await fetch(
+                 `/api/fotos?page=${pagina}`
+             );
 
-        const totalPaginas =
-            Math.ceil(
-                total / 20
-            );
+         const datos =
+             await respuesta.json();
 
-        const galeria =
-            document.querySelector(
-                ".galeria"
-            );
+         const fotos =
+             datos.fotos;
 
-        galeria.innerHTML = "";
+         const total =
+             datos.total;
 
-        fotos.forEach((foto, index) => {
+         const totalPaginas =
+             Math.ceil(
+                 total / 20
+             );
 
-            const div =
-                document.createElement(
-                    "div"
-                );
+         const galeria =
+             document.querySelector(
+                 ".galeria"
+             );
 
-            div.className = "foto";
+         fotos.forEach((foto, index) => {
 
-            div.innerHTML = `
-                <img
-                    src="${foto.url_thumbnail}"
-                    alt="${foto.nombre_archivo}"
-                    loading="lazy"
-                    class="thumbnail"
-                    data-index="${index}"
-                >
-            `;
+             const indiceGlobal =
+                 fotosActuales.length;
 
-            galeria.appendChild(
-                div
-            );
-        });
-        
-        document.getElementById(
-            "pagina-actual"
-        ).textContent =
-            `Página ${pagina} de ${totalPaginas}`;
-            
-        
-        document.getElementById(
-            "anterior"
-        ).disabled =
-            pagina === 1;
+             fotosActuales.push(foto);
 
-        document.getElementById(
-            "siguiente"
-        ).disabled =
-            pagina >= totalPaginas;
+             const div =
+                 document.createElement(
+                     "div"
+                 );
 
-    } catch (error) {
+             div.className = "foto";
 
-        console.error(error);
-    }
-      
-}
+             div.innerHTML = `
+                 <img
+                     src="${foto.url_thumbnail}"
+                     alt="${foto.nombre_archivo}"
+                     loading="lazy"
+                     class="thumbnail"
+                     data-index="${indiceGlobal}"
+                 >
+             `;
+
+             galeria.appendChild(
+                 div
+             );
+         });
+
+         if (pagina >= totalPaginas) {
+
+             hayMasFotos = false;
+
+             document.getElementById(
+                 "estado-carga"
+             ).textContent =
+                 "Fin de la galería";
+
+         } else {
+
+             pagina++;
+
+             document.getElementById(
+                 "estado-carga"
+             ).textContent =
+                 "";
+         }
+
+     } catch (error) {
+
+         console.error(error);
+
+         document.getElementById(
+             "estado-carga"
+         ).textContent =
+             "Error cargando fotos";
+     }
+
+     cargando = false;
+ }
 
 cargarFotos();
+
+const observer =
+    new IntersectionObserver(
+        (entries) => {
+
+            if (
+                entries[0].isIntersecting
+            ) {
+
+                cargarFotos();
+            }
+        },
+        {
+            root: null,
+            rootMargin: "300px",
+            threshold: 0
+        }
+    );
+
+observer.observe(
+    document.getElementById(
+        "sentinela"
+    )
+);
 
 async function buscarFotos() {
 
@@ -687,55 +689,14 @@ async function buscarFotos() {
     });
 
     document.getElementById(
-        "pagina-actual"
+        "estado-carga"
     ).textContent =
         `${fotos.length} coincidencias`;
-
-    document.getElementById(
-        "anterior"
-    ).disabled = true;
-
-    document.getElementById(
-        "siguiente"
-    ).disabled = true;
 }
 
-document.getElementById(
-    "siguiente"
-).addEventListener(
-    "click",
-    () => {
 
-        pagina++;
 
-        cargarFotos();
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    }
-);
-
-document.getElementById(
-    "anterior"
-).addEventListener(
-    "click",
-    () => {
-
-        if (pagina > 1) {
-
-            pagina--;
-
-            cargarFotos();
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }
-    }
-);
 
 
 const modal =
@@ -898,15 +859,18 @@ document.getElementById(
 
             modoBusqueda = false;
 
-            pagina =
-                paginaAnterior;
-
+            pagina = 1;
+            hayMasFotos = true;
+            cargando = false;
+            fotosActuales = [];
+            
+            document.querySelector(
+                ".galeria"
+            ).innerHTML = "";
+            
+            
             await cargarFotos();
 
-            window.scrollTo({
-                top: posicionScroll,
-                behavior: "instant"
-            });
         }
 
     }
