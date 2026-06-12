@@ -36,7 +36,7 @@
         letter-spacing: 2px;
     }
 
-    ..busqueda {
+    .busqueda {
         display: flex;
         gap: 10px;
         margin-bottom: 30px;
@@ -716,64 +716,10 @@ const imagenAmpliada =
         "imagen-ampliada"
     );
 
-    function abrirFoto(index) {
 
-        indiceActual = index;
-
-        const foto =
-            fotosActuales[indiceActual];
-
-        document.getElementById(
-            "btn-agregar-carrito"
-        ).onclick = () => {
-            agregarAlCarrito(foto);
-        };
-
-        document.getElementById(
-            "panel-carrito"
-        ).classList.remove("abierto");
-
-        const btnSig =
-            document.getElementById("modal-siguiente");
-
-        const btnAnt =
-            document.getElementById("modal-anterior");
-
-        btnSig.disabled = true;
-        btnAnt.disabled = true;
-
-        imagenAmpliada.classList.add(
-            "cargando-preview"
-        );
-
-        const nuevaImagen =
-            new Image();
-
-        nuevaImagen.onload = () => {
-
-            imagenAmpliada.src =
-                nuevaImagen.src;
-
-            imagenAmpliada.classList.remove(
-                "cargando-preview"
-            );
-
-            btnSig.disabled = false;
-            btnAnt.disabled = false;
-        };
-
-        nuevaImagen.src =
-            foto.url_preview || foto.url_thumbnail;
-
-        document.getElementById(
-            "btn-descargar"
-        ).href =
-            foto.url_original;
-
-        modal.style.display =
-            "flex";
-    }
-
+    
+    
+    
     document.addEventListener(
         "click",
         (e) => {
