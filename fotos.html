@@ -205,6 +205,107 @@
         right: 15px;
     }
     
+    .btn-carrito {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: white;
+        color: black;
+        border: none;
+        padding: 14px 18px;
+        border-radius: 999px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 9998;
+    }
+
+    .panel-carrito {
+        position: fixed;
+        top: 0;
+        right: -420px;
+        width: 100%;
+        max-width: 420px;
+        height: 100vh;
+        background: #111;
+        color: white;
+        z-index: 10000;
+        padding: 20px;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .panel-carrito.abierto {
+        right: 0;
+    }
+
+    .carrito-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .carrito-header button {
+        background: none;
+        color: white;
+        border: none;
+        font-size: 32px;
+        cursor: pointer;
+    }
+
+    .item-carrito {
+        display: grid;
+        grid-template-columns: 70px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #333;
+        padding-bottom: 12px;
+    }
+
+    .item-carrito img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .item-carrito-info {
+        font-size: 0.9rem;
+    }
+
+    .item-carrito-info p {
+        margin: 4px 0;
+    }
+
+    .btn-eliminar {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .carrito-total {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+        font-size: 1.2rem;
+    }
+
+    .btn-pagar,
+    .btn-agregar-carrito {
+        width: 100%;
+        background: white;
+        color: black;
+        border: none;
+        padding: 14px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 12px;
+    }
+    
 </style>
 
 
@@ -261,6 +362,10 @@
             >
             Descargar original HD
         </a>
+            
+        <button id="btn-agregar-carrito" class="btn-agregar-carrito">
+            Agregar al carrito - $60 MXN
+        </button>
 
     </div>
 
@@ -286,6 +391,31 @@
 
 </div>
 
+<button id="btn-ver-carrito" class="btn-carrito">
+    🛒 Carrito <span id="contador-carrito">0</span>
+</button>
+
+<div id="panel-carrito" class="panel-carrito">
+
+    <div class="carrito-header">
+        <h2>Carrito</h2>
+        <button id="cerrar-carrito">×</button>
+    </div>
+
+    <div id="items-carrito"></div>
+
+    <div class="carrito-total">
+        <strong>Total:</strong>
+        <span id="total-carrito">$0 MXN</span>
+    </div>
+
+    <button id="btn-pagar" class="btn-pagar">
+        Pagar
+    </button>
+
+</div>
+
+
 <script>
 
     let pagina = 1;
@@ -299,7 +429,122 @@
     let fotosActuales = [];
     let indiceActual = 0;
     
+    const PRECIO_FOTO = 60;
+
+    let carrito =
+        JSON.parse(
+            localStorage.getItem("carritoFotos")
+        ) || [];
+    
+    
+    function guardarCarrito() {
+
+        localStorage.setItem(
+            "carritoFotos",
+            JSON.stringify(carrito)
+        );
+    }
+
+    function actualizarCarrito() {
+
+        const contenedor =
+            document.getElementById(
+                "items-carrito"
+            );
+
+        const contador =
+            document.getElementById(
+                "contador-carrito"
+            );
+
+        const total =
+            document.getElementById(
+                "total-carrito"
+            );
+
+        contenedor.innerHTML = "";
         
+        if (carrito.length === 0) {
+
+            contenedor.innerHTML = `
+                <p>
+                    Tu carrito está vacío
+                </p>
+            `;
+        }
+
+        carrito.forEach(foto => {
+
+            const item =
+                document.createElement("div");
+
+            item.className = "item-carrito";
+
+            item.innerHTML = `
+                <img src="${foto.url_thumbnail}">
+
+                <div class="item-carrito-info">
+                    <strong>${foto.nombre_archivo}</strong>
+                    <p>$${PRECIO_FOTO} MXN</p>
+                </div>
+
+                <button
+                    class="btn-eliminar"
+                    data-id="${foto.id}"
+                >
+                    🗑️
+                </button>
+            `;
+
+            contenedor.appendChild(item);
+        });
+
+        contador.textContent =
+            carrito.length;
+
+        total.textContent =
+            `$${carrito.length * PRECIO_FOTO} MXN`;
+
+        guardarCarrito();
+    }
+
+    function agregarAlCarrito(foto) {
+
+        const yaExiste =
+            carrito.some(
+                item => item.id === foto.id
+            );
+
+        if (yaExiste) {
+            alert("Esta foto ya está en tu carrito");
+            return;
+        }
+
+        carrito.push({
+            id: foto.id,
+            nombre_archivo: foto.nombre_archivo,
+            url_thumbnail: foto.url_thumbnail,
+            url_original: foto.url_original
+        });
+
+        actualizarCarrito();
+
+        alert("Foto agregada al carrito");
+    }
+
+    function eliminarDelCarrito(id) {
+
+        carrito =
+            carrito.filter(
+                foto => String(foto.id) !== String(id)
+            );
+
+        actualizarCarrito();
+    }
+ 
+ 
+ 
+ 
 async function cargarFotos() {
 
     try {
@@ -507,6 +752,19 @@ const imagenAmpliada =
 
         const foto =
             fotosActuales[indiceActual];
+            
+        document.getElementById(
+            "btn-agregar-carrito"
+        ).onclick = () => {
+
+            agregarAlCarrito(foto);
+        };
+        
+        document.getElementById(
+            "panel-carrito"
+        ).classList.remove(
+            "abierto"
+        );
 
         imagenAmpliada.src =
             foto.url_preview || foto.url_thumbnail;
@@ -698,7 +956,67 @@ document.addEventListener(
     }
 );
 
+document.getElementById(
+    "btn-ver-carrito"
+).addEventListener(
+    "click",
+    () => {
 
+        document.getElementById(
+            "panel-carrito"
+        ).classList.add("abierto");
+    }
+);
+
+document.getElementById(
+    "cerrar-carrito"
+).addEventListener(
+    "click",
+    () => {
+
+        document.getElementById(
+            "panel-carrito"
+        ).classList.remove("abierto");
+    }
+);
+
+document.getElementById(
+    "items-carrito"
+).addEventListener(
+    "click",
+    (e) => {
+
+        if (
+            e.target.classList.contains(
+                "btn-eliminar"
+            )
+        ) {
+
+            eliminarDelCarrito(
+                e.target.dataset.id
+            );
+        }
+    }
+);
+
+document.getElementById(
+    "btn-pagar"
+).addEventListener(
+    "click",
+    () => {
+
+        if (carrito.length === 0) {
+            alert("Tu carrito está vacío");
+            return;
+        }
+
+        alert(
+            "Aquí conectaremos Stripe Checkout"
+        );
+    }
+);
+
+actualizarCarrito();
 
 </script>
 
