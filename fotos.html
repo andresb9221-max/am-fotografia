@@ -395,6 +395,8 @@
     let fotosActuales = [];
     let indiceActual = 0;
     
+    let paginaAntesBusqueda = 1;
+    
     const PRECIO_FOTO = 60;
 
     let carrito =
@@ -544,6 +546,9 @@
      document.getElementById(
          "panel-carrito"
      ).classList.remove("abierto");
+     
+     console.log("PREVIEW:", foto.url_preview);
+     console.log("ORIGINAL:", foto.url_original);
 
      imagenAmpliada.src =
          foto.url_preview || foto.url_thumbnail;
@@ -685,6 +690,10 @@ observer.observe(
     )
 );
 
+
+const paginaGuardada =
+    pagina;
+
 async function buscarFotos() {
 
     const numero =
@@ -699,7 +708,7 @@ async function buscarFotos() {
     posicionScroll =
         window.scrollY;
 
-    paginaAnterior =
+    paginaAntesBusqueda =
         pagina;
 
     modoBusqueda = true;
@@ -887,6 +896,9 @@ document.getElementById(
         ) {
 
             modoBusqueda = false;
+            
+            const paginasACargar =
+                paginaAntesBusqueda;
 
             pagina = 1;
             hayMasFotos = true;
@@ -898,7 +910,14 @@ document.getElementById(
             ).innerHTML = "";
             
             
-            await cargarFotos();
+            for (let i = 1; i <= paginasACargar; i++) {
+                await cargarFotos();
+            }
+            
+            window.scrollTo({
+                top: posicionScroll,
+                behavior: "instant"
+            });
 
         }
 
