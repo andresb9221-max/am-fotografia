@@ -1015,16 +1015,44 @@ document.getElementById(
     "btn-pagar"
 ).addEventListener(
     "click",
-    () => {
+    async () => {
 
         if (carrito.length === 0) {
             alert("Tu carrito está vacío");
             return;
         }
 
-        alert(
-            "Aquí conectaremos Stripe Checkout"
-        );
+        const respuesta =
+            await fetch(
+                "/api/crear-checkout",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        carrito
+                    })
+                }
+            );
+
+        const data =
+            await respuesta.json();
+
+        if (data.url) {
+
+            window.location.href =
+                data.url;
+
+        } else {
+
+            alert(
+                "No se pudo iniciar el pago"
+            );
+        }
     }
 );
 
