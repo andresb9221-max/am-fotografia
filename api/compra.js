@@ -90,7 +90,7 @@ module.exports = async (req, res) => {
             compra: {
                 id: datosCompra.id,
                 total_mxn: datosCompra.total_mxn,
-                email: datosCompra.email
+                email: datosCompra.email,
                 token_descarga: datosCompra.token_descarga
             },
             fotos: fotos.rows
