@@ -11,6 +11,23 @@ const pool = new Pool({
     }
 });
 
+function leerRawBody(req) {
+    return new Promise((resolve, reject) => {
+
+        const chunks = [];
+
+        req.on("data", (chunk) => {
+            chunks.push(chunk);
+        });
+
+        req.on("end", () => {
+            resolve(Buffer.concat(chunks));
+        });
+
+        req.on("error", reject);
+    });
+}
+
 module.exports = async (req, res) => {
 
     if (req.method !== "POST") {
@@ -24,9 +41,12 @@ module.exports = async (req, res) => {
 
     try {
 
+        const rawBody =
+            await leerRawBody(req);
+
         event =
             stripe.webhooks.constructEvent(
-                req.rawBody,
+                rawBody,
                 sig,
                 process.env.STRIPE_WEBHOOK_SECRET
             );
@@ -58,22 +78,26 @@ module.exports = async (req, res) => {
                 session.customer_email ||
                 null;
 
-            await pool.query(
-                `
-                UPDATE compras
-                SET
-                    pagado = true,
-                    email = $1
-                WHERE stripe_session_id = $2
-                `,
-                [
-                    email,
-                    session.id
-                ]
-            );
+            const resultado =
+                await pool.query(
+                    `
+                    UPDATE compras
+                    SET
+                        pagado = true,
+                        email = $1
+                    WHERE stripe_session_id = $2
+                    `,
+                    [
+                        email,
+                        session.id
+                    ]
+                );
 
             console.log(
-                `Compra pagada: ${session.id}`
+                "Compra pagada:",
+                session.id,
+                "Filas actualizadas:",
+                resultado.rowCount
             );
         }
 
@@ -88,5 +112,11 @@ module.exports = async (req, res) => {
         return res.status(500).send(
             "Error procesando webhook"
         );
+    }
+};
+
+module.exports.config = {
+    api: {
+        bodyParser: false
     }
 };
