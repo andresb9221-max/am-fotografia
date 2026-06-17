@@ -16,32 +16,20 @@ const s3 = new AWS.S3({
 
 module.exports = async (req, res) => {
 
-    if (req.method !== "GET") {
-        return res.status(405).send("Método no permitido");
-    }
-
     try {
 
-        const sessionId =
-            req.query.session_id;
+        const sessionId = req.query.session_id;
+        const fotoId = req.query.foto_id;
 
-        const fotoId =
-            req.query.foto_id;
-
-        if (!sessionId || !fotoId) {
-            return res.status(400).send("Faltan datos");
-        }
-
-        const compra =
-            await pool.query(
-                `
-                SELECT foto_ids, pagado
-                FROM compras
-                WHERE stripe_session_id = $1
-                LIMIT 1
-                `,
-                [sessionId]
-            );
+        const compra = await pool.query(
+            `
+            SELECT foto_ids, pagado
+            FROM compras
+            WHERE stripe_session_id = $1
+            LIMIT 1
+            `,
+            [sessionId]
+        );
 
         if (
             compra.rows.length === 0 ||
@@ -50,23 +38,23 @@ module.exports = async (req, res) => {
             return res.status(403).send("Compra no válida");
         }
 
-        const fotoIds =
-            compra.rows[0].foto_ids;
-
-        if (!fotoIds.includes(String(fotoId))) {
+        if (
+            !compra.rows[0].foto_ids.includes(
+                String(fotoId)
+            )
+        ) {
             return res.status(403).send("Foto no comprada");
         }
 
-        const foto =
-            await pool.query(
-                `
-                SELECT nombre_archivo, url_original
-                FROM fotos
-                WHERE id = $1
-                LIMIT 1
-                `,
-                [fotoId]
-            );
+        const foto = await pool.query(
+            `
+            SELECT nombre_archivo, url_original
+            FROM fotos
+            WHERE id = $1
+            LIMIT 1
+            `,
+            [fotoId]
+        );
 
         if (foto.rows.length === 0) {
             return res.status(404).send("Foto no encontrada");
@@ -86,24 +74,32 @@ module.exports = async (req, res) => {
                 url.pathname.replace("/", "")
             );
 
-        const signedUrl =
-            s3.getSignedUrl(
-                "getObject",
-                {
-                    Bucket: "mi-bucket-amfotografia",
-                    Key: key,
-                    Expires: 60,
-                    ResponseContentDisposition:
-                        `attachment; filename="${nombreArchivo}"`
-                }
-            );
+        const archivo =
+            await s3.getObject({
+                Bucket: "mi-bucket-amfotografia",
+                Key: key
+            }).promise();
 
-        return res.redirect(signedUrl);
+        res.setHeader(
+            "Content-Type",
+            archivo.ContentType || "image/jpeg"
+        );
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${nombreArchivo}"`
+        );
+
+        return res.status(200).send(
+            archivo.Body
+        );
 
     } catch (error) {
 
         console.error(error);
 
-        return res.status(500).send("Error descargando foto");
+        return res.status(500).send(
+            "Error descargando foto"
+        );
     }
 };
