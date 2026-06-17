@@ -23,10 +23,13 @@ module.exports = async (req, res) => {
 
         const sessionId =
             req.query.session_id;
+        
+        const token =
+            req.query.token;
 
-        if (!sessionId) {
+        if (!sessionId && !token) {
             return res.status(400).json({
-                error: "Falta session_id"
+                error: "Falta session_ido token"
             });
         }
 
@@ -39,12 +42,18 @@ module.exports = async (req, res) => {
                     foto_ids,
                     total_mxn,
                     pagado,
-                    email
+                    email,
+                    token_descarga
                 FROM compras
-                WHERE stripe_session_id = $1
+                WHERE 
+                    stripe_session_id = $1
+                    OR token_descarga = $2
                 LIMIT 1
                 `,
-                [sessionId]
+                [
+                    sessionId || "",
+                    token || ""
+                ]
             );
 
         if (compra.rows.length === 0) {
@@ -82,6 +91,7 @@ module.exports = async (req, res) => {
                 id: datosCompra.id,
                 total_mxn: datosCompra.total_mxn,
                 email: datosCompra.email
+                token_descarga: datosCompra.token_descarga
             },
             fotos: fotos.rows
         });

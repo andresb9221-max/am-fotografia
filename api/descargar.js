@@ -19,16 +19,26 @@ module.exports = async (req, res) => {
     try {
 
         const sessionId = req.query.session_id;
+        const token = req.query.token;
         const fotoId = req.query.foto_id;
+
+        if ((!sessionId && !token) || !fotoId) {
+            return res.status(400).send("Faltan datos");
+        }
 
         const compra = await pool.query(
             `
             SELECT foto_ids, pagado
             FROM compras
-            WHERE stripe_session_id = $1
+            WHERE
+                stripe_session_id = $1
+                OR token_descarga = $2
             LIMIT 1
             `,
-            [sessionId]
+            [
+                sessionId || "",
+                token || ""
+            ]
         );
 
         if (
