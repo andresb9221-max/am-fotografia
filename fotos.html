@@ -306,6 +306,15 @@
         user-select: none;
     }
     
+    #imagen-ampliada {
+        touch-action: pan-y;
+        cursor: grab;
+    }
+
+    #imagen-ampliada:active {
+        cursor: grabbing;
+    }
+    
 </style>
 
 
@@ -1107,6 +1116,102 @@ document.addEventListener(
             e.target.tagName === "IMG"
         ) {
             e.preventDefault();
+        }
+    }
+);
+
+let inicioX = 0;
+let inicioY = 0;
+let arrastrandoModal = false;
+
+const distanciaSwipe = 60;
+
+imagenAmpliada.addEventListener(
+    "pointerdown",
+    (e) => {
+
+        if (modal.style.display !== "flex") {
+            return;
+        }
+
+        arrastrandoModal = true;
+
+        inicioX = e.clientX;
+        inicioY = e.clientY;
+
+        imagenAmpliada.setPointerCapture(
+            e.pointerId
+        );
+    }
+);
+
+imagenAmpliada.addEventListener(
+    "pointerup",
+    async (e) => {
+
+        if (!arrastrandoModal) {
+            return;
+        }
+
+        arrastrandoModal = false;
+
+        const diferenciaX =
+            e.clientX - inicioX;
+
+        const diferenciaY =
+            e.clientY - inicioY;
+
+        if (
+            Math.abs(diferenciaX) <
+            distanciaSwipe
+        ) {
+            return;
+        }
+
+        if (
+            Math.abs(diferenciaY) >
+            Math.abs(diferenciaX)
+        ) {
+            return;
+        }
+
+        if (diferenciaX < 0) {
+
+            if (
+                indiceActual <
+                fotosActuales.length - 1
+            ) {
+
+                abrirFoto(
+                    indiceActual + 1
+                );
+
+                return;
+            }
+
+            if (hayMasFotos && !modoBusqueda) {
+
+                await cargarFotos();
+
+                if (
+                    indiceActual <
+                    fotosActuales.length - 1
+                ) {
+
+                    abrirFoto(
+                        indiceActual + 1
+                    );
+                }
+            }
+
+        } else {
+
+            if (indiceActual > 0) {
+
+                abrirFoto(
+                    indiceActual - 1
+                );
+            }
         }
     }
 );
