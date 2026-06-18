@@ -158,21 +158,42 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        background: white;
+        background: rgba(255,255,255,0.9);
         color: black;
         border: none;
-        font-size: 28px;
-        padding: 10px 15px;
+        font-size: 32px;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
         cursor: pointer;
+        z-index: 10001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .modal-prev {
-        left: 15px;
+        left: 18px;
     }
 
     .modal-next {
-        right: 15px;
+        right: 18px;
+    }
+    
+    @media (max-width: 768px) {
+        .modal-nav {
+            width: 44px;
+            height: 44px;
+            font-size: 26px;
+        }
+
+        .modal-prev {
+            left: 8px;
+        }
+
+        .modal-next {
+            right: 8px;
+        }
     }
     
     .btn-carrito {
@@ -280,6 +301,11 @@
         opacity: 0.4;
     }
     
+    img {
+        -webkit-user-drag: none;
+        user-select: none;
+    }
+    
 </style>
 
 
@@ -327,16 +353,7 @@
     <div class="modal-contenido">
 
         <img id="imagen-ampliada">
-
-            <a
-                id="btn-descargar"
-                href="#"
-                download
-                class="btn-descargar"
-            >
-            Descargar original HD
-        </a>
-            
+                        
         <button id="btn-agregar-carrito" class="btn-agregar-carrito">
             Agregar al carrito - $60 MXN
         </button>
@@ -552,11 +569,6 @@
 
      imagenAmpliada.src =
          foto.url_preview || foto.url_thumbnail;
-
-     document.getElementById(
-         "btn-descargar"
-     ).href =
-         foto.url_original;
 
      modal.style.display =
          "flex";
@@ -803,7 +815,7 @@ const imagenAmpliada =
         "modal-siguiente"
     ).addEventListener(
         "click",
-        (e) => {
+        async (e) => {
 
             e.stopPropagation();
 
@@ -815,6 +827,23 @@ const imagenAmpliada =
                 abrirFoto(
                     indiceActual + 1
                 );
+
+                return;
+            }
+
+            if (hayMasFotos && !modoBusqueda) {
+
+                await cargarFotos();
+
+                if (
+                    indiceActual <
+                    fotosActuales.length - 1
+                ) {
+
+                    abrirFoto(
+                        indiceActual + 1
+                    );
+                }
             }
         }
     );
@@ -1057,6 +1086,30 @@ document.getElementById(
 );
 
 actualizarCarrito();
+
+document.addEventListener(
+    "contextmenu",
+    (e) => {
+
+        if (
+            e.target.tagName === "IMG"
+        ) {
+            e.preventDefault();
+        }
+    }
+);
+
+document.addEventListener(
+    "dragstart",
+    (e) => {
+
+        if (
+            e.target.tagName === "IMG"
+        ) {
+            e.preventDefault();
+        }
+    }
+);
 
 </script>
 
