@@ -12,7 +12,7 @@ const pool = new Pool({
     }
 });
 
-const PRECIO_FOTO = 10;
+const PRECIO_FOTO = 80;
 
 module.exports = async (req, res) => {
 
