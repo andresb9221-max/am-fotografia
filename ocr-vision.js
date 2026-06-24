@@ -41,7 +41,7 @@ async function procesarFotos() {
                 SELECT
                     id,
                     nombre_archivo,
-                    url_original
+                    url_preview
                 FROM fotos
                 WHERE procesada = false
                 ORDER BY id
@@ -78,10 +78,10 @@ async function procesarFotos() {
                     continue;
                 }
             
-            if (!foto.url_original) {
+            if (!foto.url_preview) {
 
                 console.log(
-                    `ID ${foto.id} sin url_original`
+                    `ID ${foto.id} sin url_preview`
                 );
 
                 continue;
@@ -89,7 +89,7 @@ async function procesarFotos() {
 
             const imagenResponse =
                 await fetch(
-                    foto.url_original
+                    foto.url_preview
                 );
 
             const arrayBuffer =
