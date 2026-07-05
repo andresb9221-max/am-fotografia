@@ -2,11 +2,15 @@
   "name": "am-fotografia",
   "version": "1.0.0",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1078.0",
+    "@aws-sdk/s3-request-presigner": "^3.1078.0",
+    "@supabase/supabase-js": "^2.110.0",
     "@vercel/analytics": "^2.0.1",
     "aws-sdk": "^2.1693.0",
     "dotenv": "^17.4.2",
     "pg": "^8.21.0",
     "resend": "^6.12.4",
+    "sharp": "^0.35.3",
     "stripe": "^22.2.1",
     "twilio": "^6.0.2"
   }

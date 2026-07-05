@@ -1,7 +1,15 @@
 require("dotenv").config();
 
-const AWS = require("aws-sdk");
+const { S3Client, ListObjectsV2Command } = require("@aws-sdk/client-s3");
 const { Pool } = require("pg");
+
+console.log("Iniciando importar originales...");
+
+const BUCKET = "mi-bucket-amfotografia";
+const PREFIX = "originales/";
+const REGION = "us-east-2";
+
+const EVENTO = "carrera-once-ipn-5k";
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -10,93 +18,135 @@ const pool = new Pool({
     }
 });
 
-const s3 = new AWS.S3({
-    region: "us-east-2",
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+const s3 = new S3Client({
+    region: REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    }
 });
 
-async function actualizarOriginales() {
+async function listarTodosLosObjetosS3() {
+    let token = undefined;
+    let pagina = 1;
+    const objetos = [];
 
+    do {
+        console.log(`\nConsultando página ${pagina}...`);
+
+        const command = new ListObjectsV2Command({
+            Bucket: BUCKET,
+            Prefix: PREFIX,
+            MaxKeys: 100,
+            ContinuationToken: token
+        });
+
+        const resultado = await s3.send(command);
+        const contents = resultado.Contents || [];
+
+        console.log({
+            pagina,
+            KeyCount: resultado.KeyCount,
+            IsTruncated: resultado.IsTruncated,
+            TieneNextToken: !!resultado.NextContinuationToken,
+            PrimerKey: contents[0]?.Key,
+            UltimoKey: contents[contents.length - 1]?.Key
+        });
+
+        const archivos = contents.filter((archivo) => {
+            return archivo.Key && !archivo.Key.endsWith("/");
+        });
+
+        objetos.push(...archivos);
+
+        token = resultado.IsTruncated
+            ? resultado.NextContinuationToken
+            : undefined;
+
+        pagina++;
+
+    } while (token);
+
+    return objetos;
+}
+
+async function importarOriginales() {
     try {
+        const objetos = await listarTodosLosObjetosS3();
 
-        let token = undefined;
-        let total = 0;
+        console.log("\nListado S3 terminado");
+        console.log(`Total objetos útiles encontrados en S3: ${objetos.length}`);
 
-        do {
+        let procesadas = 0;
+        let insertadasOActualizadas = 0;
+        let errores = 0;
 
-            const resultado = await s3.listObjectsV2({
+        for (const archivo of objetos) {
+            procesadas++;
 
-                Bucket: "mi-bucket-amfotografia",
+            const nombreArchivo = archivo.Key.replace(PREFIX, "");
 
-                Prefix: "originales/",
+            const urlOriginal =
+                `https://${BUCKET}.s3.${REGION}.amazonaws.com/${archivo.Key}`;
 
-                MaxKeys: 50,
+            try {
+                const resultado = await pool.query(
+                    `
+                    INSERT INTO fotos (
+                        evento,
+                        nombre_archivo,
+                        url_original
+                    )
+                    VALUES ($1, $2, $3)
+                    ON CONFLICT (nombre_archivo)
+                    DO UPDATE SET
+                        evento = EXCLUDED.evento,
+                        url_original = EXCLUDED.url_original
+                    RETURNING id, evento, nombre_archivo, url_original
+                    `,
+                    [
+                        EVENTO,
+                        nombreArchivo,
+                        urlOriginal
+                    ]
+                );
 
-                ContinuationToken: token
+                insertadasOActualizadas += resultado.rowCount;
 
-            }).promise();
-
-            console.log(
-                `Procesando ${resultado.KeyCount} archivos`
-            );
-
-            for (const archivo of resultado.Contents) {
-
-                if (archivo.Key.endsWith("/")) {
-                    continue;
+                if (procesadas % 100 === 0) {
+                    console.log({
+                        procesadas,
+                        insertadasOActualizadas,
+                        errores
+                    });
                 }
 
-                total++;
+            } catch (error) {
+                errores++;
 
-                const nombreArchivo =
-                    archivo.Key.replace(
-                        "originales/",
-                        ""
-                    );
-
-                const urlOriginal =
-                    `https://mi-bucket-amfotografia.s3.us-east-2.amazonaws.com/${archivo.Key}`;
-
-                const resultadoUpdate =
-                    await pool.query(
-                        `
-                        UPDATE fotos
-                        SET url_original = $1
-                        WHERE nombre_archivo = $2
-                        `,
-                        [
-                            urlOriginal,
-                            nombreArchivo
-                        ]
-                    );
-
-                console.log(
-                    `Actualizada: ${nombreArchivo}`
-                );
+                console.error(`Error importando ${nombreArchivo}:`);
+                console.error(error.message);
             }
+        }
 
-            token =
-                resultado.NextContinuationToken;
-
-        } while (token);
-
-        console.log(
-            `Total procesadas: ${total}`
-        );
+        console.log("\nProceso terminado");
+        console.log({
+            objetosS3: objetos.length,
+            procesadas,
+            insertadasOActualizadas,
+            errores
+        });
 
         await pool.end();
-
         process.exit(0);
 
     } catch (error) {
-
-        console.log(error);
+        console.error("\nERROR GENERAL:");
+        console.error(error);
 
         await pool.end();
-
         process.exit(1);
     }
 }
 
-actualizarOriginales();
+importarOriginales();

@@ -41,9 +41,8 @@ async function procesarFotos() {
                 SELECT
                     id,
                     nombre_archivo,
-                    url_preview
+                    url_original
                 FROM fotos
-                WHERE procesada = false
                 ORDER BY id
                 `
             );
@@ -78,10 +77,10 @@ async function procesarFotos() {
                     continue;
                 }
             
-            if (!foto.url_preview) {
+            if (!foto.url_original) {
 
                 console.log(
-                    `ID ${foto.id} sin url_preview`
+                    `ID ${foto.id} sin url_original`
                 );
 
                 continue;
@@ -89,7 +88,7 @@ async function procesarFotos() {
 
             const imagenResponse =
                 await fetch(
-                    foto.url_preview
+                    foto.url_original
                 );
 
             const arrayBuffer =
@@ -148,6 +147,15 @@ async function procesarFotos() {
 
             console.log(
                 `JSON guardado: ${foto.id}.json`
+            );
+            
+            await pool.query(
+                `
+                UPDATE fotos
+                SET procesada = true
+                WHERE id = $1
+                `,
+                [foto.id]
             );
         }
 
