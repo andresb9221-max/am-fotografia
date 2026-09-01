@@ -3,8 +3,6 @@
 //  A&M Fotografía
 //
 
-alert("SCRIPT CARGADO");
-
 const form = document.getElementById("registroForm");
 
 form.addEventListener("submit", async (e) => {
@@ -127,4 +125,3 @@ try {
 
 
 });
-
