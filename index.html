@@ -3,104 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A&M Fotografía</title>
-
-    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Encuentra tus fotografías de carreras y eventos deportivos con A&M Fotografía.">
+    <title>A&M Fotografía | Tu esfuerzo en una imagen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="portada.css">
 </head>
 <body>
-
-<div class="contenedor">
-
-    <h1>A&M<br>FOTOGRAFÍA</h1>
-
-    <p class="subtitulo">
-        Regístrate aquí para obtener notificaciones con tus fotos de la carrera:
-    </p>
-
-    <form id="registroForm">
-
-        <div class="campo">
-            <label>Nombre:</label>
-            <input
-                type="text"
-                id="nombre"
-                maxlength="100"
-                required
-            >
-        </div>
-
-        <div class="campo">
-            <label>Evento:</label>
-
-            <select id="evento" required>
-                <option value="">Selecciona un evento</option>
-
-                <option>5K Nocturna</option>
-                <option>Medio Maratón</option>
-                <option>Carrera Empresarial</option>
-            </select>
-        </div>
-
-        <div class="campo">
-            <label>Número de corredor:</label>
-
-            <input
-                type="text"
-                id="numero_corredor"
-                maxlength="6"
-                required
-            >
-        </div>
-
-        <div class="campo">
-            <label>Número de WhatsApp:</label>
-
-            <input
-                type="text"
-                id="whatsapp"
-                maxlength="15"
-                required
-            >
-        </div>
-        
-        <div class="campo">
-            <label>Email:</label>
-
-            <input
-                type="email"
-                id="email"
-                maxlength="150"
-                required
-            >
-        </div>
-
-        <div class="checkbox-container">
-
-            <input
-                type="checkbox"
-                id="consentimiento"
-            >
-
-            <div>
-                <label>
-                    Acepto recibir mensajes por WhatsApp relacionados con mis fotos del evento y enlaces de búsqueda
-                </label>
-
-                <p class="privacidad">
-                    No compartiremos tus datos con terceros
-                </p>
+    <header class="site-header">
+        <a class="marca" href="/" aria-label="A&M Fotografía, inicio"><span class="marca-principal">A&M</span><span class="marca-secundaria">Fotografía</span></a>
+        <nav aria-label="Navegación principal"><a href="#albumes">Álbumes</a><a href="/registro.html">Avisarme de mis fotos</a></nav>
+    </header>
+    <main>
+        <section class="hero" aria-labelledby="titulo-principal">
+            <div class="hero-contenido">
+                <p class="eyebrow">Fotografía deportiva · Morelia</p>
+                <h1 id="titulo-principal">Tu esfuerzo.<br><span>Tu momento.</span></h1>
+                <p class="hero-texto">Encuentra ese instante en el que todo el entrenamiento valió la pena.</p>
+                <a class="boton boton-claro" href="#albumes">Ver últimos eventos <span aria-hidden="true">↓</span></a>
             </div>
-        </div>
-
-        <button type="submit">
-            ENVIAR
-        </button>
-
-    </form>
-
-</div>
-
-<script src="script.js"></script>
-
+            <div class="hero-imagen" id="hero-imagen" aria-hidden="true"><div class="hero-vacio"><span>A&M</span><small>Fotografía deportiva</small></div></div>
+            <div class="hero-indice" aria-hidden="true">01</div>
+        </section>
+        <section class="albumes-seccion" id="albumes" aria-labelledby="titulo-albumes">
+            <div class="seccion-encabezado"><div><p class="eyebrow oscuro">Galerías recientes</p><h2 id="titulo-albumes">Encuentra tu carrera</h2></div><p>Selecciona un evento y busca por tu número de corredor.</p></div>
+            <div id="albumes-grid" class="albumes-grid" aria-live="polite"><article class="album-skeleton" aria-label="Cargando álbumes"></article><article class="album-skeleton" aria-hidden="true"></article></div>
+            <p id="albumes-estado" class="albumes-estado"></p>
+        </section>
+        <section class="como-funciona" aria-labelledby="titulo-como">
+            <div class="como-intro"><p class="eyebrow">Así de fácil</p><h2 id="titulo-como">De la carrera<br>a tu galería.</h2></div>
+            <ol class="pasos">
+                <li><span>01</span><div><strong>Elige tu evento</strong><p>Abre el álbum de la carrera en la que participaste.</p></div></li>
+                <li><span>02</span><div><strong>Busca tu número</strong><p>Escribe tu número de corredor para encontrar coincidencias.</p></div></li>
+                <li><span>03</span><div><strong>Descarga en HD</strong><p>Selecciona tus favoritas, paga en línea y descárgalas.</p></div></li>
+            </ol>
+        </section>
+        <section class="cta"><p class="eyebrow oscuro">Próximos eventos</p><h2>¿Quieres saber cuando<br>tus fotos estén listas?</h2><a class="boton boton-oscuro" href="/registro.html">Registrar mi número <span aria-hidden="true">↗</span></a></section>
+    </main>
+    <footer><a class="marca marca-footer" href="/"><span class="marca-principal">A&M</span><span class="marca-secundaria">Fotografía</span></a><p>Fotografía deportiva hecha en Morelia, Michoacán.</p><p>© <span id="anio"></span> A&M Fotografía</p></footer>
+    <script src="portada.js"></script>
 </body>
 </html>
