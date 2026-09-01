@@ -22,6 +22,8 @@ if (req.method !== "GET") {
 
 try {
 
+    const evento = typeof req.query.evento === "string" ? req.query.evento.trim() : "";
+
     const pagina =
         parseInt(req.query.page || "1");
 
@@ -31,10 +33,8 @@ try {
         (pagina - 1) * limite;
     
     const total = await pool.query(
-        `
-        SELECT COUNT(*) as total
-        FROM fotos
-        `
+        `SELECT COUNT(*) as total FROM fotos WHERE ($1 = '' OR evento = $1)`,
+        [evento]
     );
 
     const resultado =
@@ -47,13 +47,13 @@ try {
                 url_preview,
                 url_original
             FROM fotos
+            WHERE ($1 = '' OR evento = $1)
             ORDER BY id
-            LIMIT $1
-            OFFSET $2
+            LIMIT $2
+            OFFSET $3
             `,
             [
-                limite,
-                offset
+                evento, limite, offset
             ]
         );
 
@@ -75,4 +75,3 @@ try {
 
 
 };
-
