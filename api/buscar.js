@@ -31,6 +31,8 @@ module.exports = async (req, res) => {
         const numero =
             req.query.numero;
 
+        const evento = typeof req.query.evento === "string" ? req.query.evento.trim() : "";
+
         if (!numero) {
 
             return res.status(400).json({
@@ -50,9 +52,10 @@ module.exports = async (req, res) => {
                     numeros_detectados
                 FROM fotos
                 WHERE $1 = ANY(numeros_detectados)
+                  AND ($2 = '' OR evento = $2)
                 ORDER BY id
                 `,
-                [numero]
+                [numero, evento]
             );
 
         return res.status(200).json(
