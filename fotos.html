@@ -327,7 +327,8 @@
     
 <div class="container">
 
-    <h1>A&M FOTOGRAFÍA</h1>
+    <p style="margin-bottom:12px;"><a href="/" style="color:#aaa; text-decoration:none;">← Todos los eventos</a></p>
+    <h1 id="titulo-evento">A&M FOTOGRAFÍA</h1>
 
     <div class="busqueda">
 
@@ -429,6 +430,13 @@
         JSON.parse(
             sessionStorage.getItem("carritoFotos")
         ) || [];
+
+    const eventoActual = new URLSearchParams(window.location.search).get("evento") || "";
+    if (eventoActual) {
+        const nombreLegible = eventoActual.replace(/[-_]+/g, " ").replace(/\b\w/g, letra => letra.toUpperCase()).replace(/\bIpn\b/g, "IPN").replace(/\b5k\b/gi, "5K").replace(/\b10k\b/gi, "10K");
+        document.getElementById("titulo-evento").textContent = nombreLegible;
+        document.title = `${nombreLegible} | A&M Fotografía`;
+    }
     
     
     function guardarCarrito() {
@@ -602,7 +610,7 @@
 
          const respuesta =
              await fetch(
-                 `/api/fotos?page=${pagina}`
+                 `/api/fotos?page=${pagina}&evento=${encodeURIComponent(eventoActual)}`
              );
 
          const datos =
@@ -736,7 +744,7 @@ async function buscarFotos() {
 
     const respuesta =
         await fetch(
-            `/api/buscar?numero=${numero}`
+            `/api/buscar?numero=${numero}&evento=${encodeURIComponent(eventoActual)}`
         );
 
     const fotos =
@@ -1224,4 +1232,3 @@ imagenAmpliada.addEventListener(
 
 </body>
 </html>
-
